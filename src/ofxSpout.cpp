@@ -73,7 +73,7 @@ void ofxSpout::sendTexture()
 		//		have to specify false to disable this default then the result comes out inverted.
 		//
 		
-		SendTexture(_spoutTexture, GL_TEXTURE_2D, _width, _height);
+		SendTexture(_spoutTexture, GL_TEXTURE_2D, _width, _height, true); // invert = true
 	}
 }
 
