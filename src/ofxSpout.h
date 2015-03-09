@@ -11,12 +11,19 @@ using namespace Spout;
 class ofxSpout
 {
 public:
-	static void init(string senderName, float width, float height);
+	// sender
+	static void init(string senderName, float width, float height, bool isSender = true);
 	static void initSender();
 	static void sendTexture();
+
+	// receiver
+	static void initReceiver();
+	static void receiveTexture();
+
 	static void exit();
 
 private:
+	static bool _isSender;
 	static bool _isSpoutInitialized;
 	static bool _isSpoutDoneOnce;
 	static GLuint _spoutTexture;
@@ -24,4 +31,5 @@ private:
 	static float _width;
 	static float _height;
 	static bool _isSpoutTextureShared;
+	static ofTexture _receiverTexture;
 };
