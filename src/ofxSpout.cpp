@@ -9,12 +9,11 @@ char ofxSpout::_spoutSenderName[256];
 float ofxSpout::_width;
 float ofxSpout::_height;
 bool ofxSpout::_isSpoutTextureShared;
-ofTexture ofxSpout::_receiverTexture;
 
 
 //--------------------------------------------------------------
 
-void ofxSpout::init(string senderName, float width, float height, bool isSender)
+void ofxSpout::init(string senderName, ofTexture &receiverTexture, float width, float height, bool isSender)
 {
 	_isSender = isSender;
 	_isSpoutInitialized = false;
@@ -44,7 +43,7 @@ void ofxSpout::init(string senderName, float width, float height, bool isSender)
 	else
 	{
 		// init receiver texture
-		_receiverTexture.allocate(_width, _height, GL_RGBA);
+		receiverTexture.allocate(_width, _height, GL_RGBA);
 	}
 }
 
@@ -94,7 +93,7 @@ void ofxSpout::sendTexture()
 
 //--------------------------------------------------------------
 
-void ofxSpout::initReceiver()
+void ofxSpout::initReceiver(ofTexture &receiverTexture)
 {
 	// A render window must be available for Spout initialization
 	// and might not be available in "update", so do it now 
@@ -132,21 +131,19 @@ void ofxSpout::initReceiver()
 				_width = width;
 				_height = height;
 				// Adjust the receiving texture
-				_receiverTexture.allocate(_width, _height, GL_RGBA);
-				// reset render window
-				ofSetWindowShape(_width, _height);
+				receiverTexture.allocate(_width, _height, GL_RGBA);
 			}
 			_isSpoutDoneOnce = true; // Only do this once
 		}
 		else
 		{
-			ofDrawBitmapStringHighlight("No sender detected", 20, 20);
+			ofLogNotice("No Spout sender detected");
 		}
 	}
 }
 
 //--------------------------------------------------------------
-void ofxSpout::receiveTexture()
+void ofxSpout::receiveTexture(ofTexture &receiverTexture)
 {
 	if (_isSpoutInitialized)
 	{
@@ -158,7 +155,7 @@ void ofxSpout::receiveTexture()
 		// NOTE : if the host calls ReceiveTexture with an FBO bound
 		// that binding must be restored after the call because Spout makes use of its
 		// own FBO for intermediate rendering		
-		if (!ReceiveTexture(_spoutSenderName, _receiverTexture.getTextureData().textureID, _receiverTexture.getTextureData().textureTarget, width, height))
+		if (!ReceiveTexture(_spoutSenderName, receiverTexture.getTextureData().textureID, receiverTexture.getTextureData().textureTarget, width, height))
 		{
 			//
 			// Receiver failure :
@@ -182,16 +179,12 @@ void ofxSpout::receiveTexture()
 				_width  = width;
 				_height = height;
 				// Update the local texture to receive the new dimensions
-				_receiverTexture.allocate(_width, _height, GL_RGBA);
-				// reset render window
-				ofSetWindowShape(_width, _height);
+				receiverTexture.allocate(_width, _height, GL_RGBA);
 				return; // quit for next round
 			}
 		}
 		else
 		{
-			// draw the texture and fill the screen
-			_receiverTexture.draw(0, 0, ofGetWidth(), ofGetHeight());
 			return;
 		}
 	}

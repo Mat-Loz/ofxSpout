@@ -12,13 +12,13 @@ class ofxSpout
 {
 public:
 	// sender
-	static void init(string senderName, float width, float height, bool isSender = true);
+	static void init(string senderName, ofTexture &receiverTexture, float width, float height, bool isSender = true);
 	static void initSender();
 	static void sendTexture();
 
 	// receiver
-	static void initReceiver();
-	static void receiveTexture();
+	static void initReceiver(ofTexture &receiverTexture);
+	static void receiveTexture(ofTexture &receiverTexture);
 
 	static void exit();
 
@@ -31,5 +31,4 @@ private:
 	static float _width;
 	static float _height;
 	static bool _isSpoutTextureShared;
-	static ofTexture _receiverTexture;
 };
